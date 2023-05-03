@@ -16,11 +16,18 @@ import {
   MdChatBubble as ChatIcon,
   MdSearch as SearchIcon,
 } from "react-icons/md";
-import userImg from "../assets/xavier.jpg";
+import userImg from "../../assets/xavier.jpg";
+import SearchModal from "./SearchModal";
 
 function Navbar() {
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
+  // const [isActive, setisActive] = useState(false);
+
+  // Modal hooks
+  const [open, setOpen] = useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
 
   const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
@@ -72,13 +79,13 @@ function Navbar() {
 
   return (
     <header style={{ background: "Black" }}>
-      <Stack      
+      <Stack
         direction={"row"}
         justifyContent={"space-between"}
         alignItems={"center"}
         p={1}
         px={5}
-        sx={{maxWidth:'70rem'}}
+        sx={{ maxWidth: "70rem" }}
         mx="auto"
       >
         {/* Brand Logo  */}
@@ -101,80 +108,45 @@ function Navbar() {
         {/* Nav Links  */}
         <Stack direction="row" spacing={3} sx={{ height: "100%" }}>
           {Navs &&
-            Navs.map((nav) => (
-              <NavLink to="/" style={{ textDecoration: "none" }}>
-                <Typography
+            Navs.map((nav,index) => (
+              <NavLink
+                to={nav.route}
+                key={index}
+                // style={
+                //   ({ textDecoration: "none" },
+                //   ({ isActive }) => {
+                //     return {
+                //       fontWeight: isActive ? "bold" : "",
+                //       color: isActive ? "white" : "gray",
+                //     };
+                //   })
+                // }
+                style={({ isActive, isPending }) => {
+                  return {
+                    textDecoration: "none",
+                    color: isActive ? "white" : "gray",
+                  };
+                }}
+              >
+                {nav.name}
+                {/* <Typography
                   color="gray"
                   sx={{ textDecoration: "none", fontSize: ".9rem" }}
                 >
                   {nav.name}
-                </Typography>
+                </Typography> */}
               </NavLink>
             ))}
-          {/* <NavLink to="/" style={{ textDecoration: "none" }}>
-            <Typography
-              color="gray"
-              sx={{ textDecoration: "none", fontSize: ".9rem" }}
-            >
-              Home
-            </Typography>
-          </NavLink>
-          <NavLink to="/explore" style={{ textDecoration: "none" }}>
-            <Typography
-              color="gray"
-              sx={{ textDecoration: "none", fontSize: ".9rem" }}
-            >
-              Explore
-            </Typography>
-          </NavLink>
-          <NavLink to="/work" style={{ textDecoration: "none" }}>
-            <Typography
-              color="gray"
-              sx={{ textDecoration: "none", fontSize: ".9rem" }}
-            >
-              Work
-            </Typography>
-          </NavLink>
-          <NavLink to="/bookmarks" style={{ textDecoration: "none" }}>
-            <Typography
-              color="gray"
-              sx={{ textDecoration: "none", fontSize: ".9rem" }}
-            >
-              Bookmarks
-            </Typography>
-          </NavLink>
-          <NavLink to="communities" style={{ textDecoration: "none" }}>
-            <Typography
-              color="gray"
-              sx={{ textDecoration: "none", fontSize: ".9rem" }}
-            >
-              Communities
-            </Typography>
-          </NavLink>
-          <NavLink to="courses" style={{ textDecoration: "none" }}>
-            <Typography
-              color="gray"
-              sx={{ textDecoration: "none", fontSize: ".9rem" }}
-            >
-              Courses
-            </Typography>
-          </NavLink>
-          <NavLink to="podcasts" style={{ textDecoration: "none" }}>
-            <Typography
-              color="gray"
-              sx={{ textDecoration: "none", fontSize: ".9rem" }}
-            >
-              Podcasts
-            </Typography>
-          </NavLink> */}
         </Stack>
         {/* Right navigation icons  */}
         <Stack direction="row" spacing={1} alignItems="center">
-          <Tooltip title="Notifications">
-            <IconButton>
+          <Tooltip title="Search">
+            <IconButton onClick={handleOpen}>
               <SearchIcon color="gray" size={"1.5rem"} />
             </IconButton>
           </Tooltip>
+          {/* Search Modal  */}
+          <SearchModal open={open} handleClose={handleClose} />
           <Tooltip title="Notifications">
             <IconButton>
               <NotificationIcon color="gray" size={"1.5rem"} />
@@ -220,7 +192,7 @@ function Navbar() {
                   width="40px"
                   height="40px"
                   style={{ borderRadius: "100%" }}
-                  borderRadius="full"
+                  borderradius="full"
                 />
                 <Box>
                   <Typography

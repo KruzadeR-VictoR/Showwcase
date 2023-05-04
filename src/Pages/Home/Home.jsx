@@ -10,9 +10,13 @@ import {
   Skeleton,
   Grid,
   Divider,
+  Card,
+  CardMedia,
+  CardContent,
+  Link,
 } from "@mui/material";
 import axios from "axios";
-import React from "react";
+import React, { useRef, useState } from "react";
 import { useQuery } from "react-query";
 import CloseIcon from "@mui/icons-material/Close";
 import userImg from "../../assets/licensed-image.jpg";
@@ -26,9 +30,15 @@ import { BsBookmarkFill as BookmarkFillIcon } from "react-icons/bs";
 import { PuffLoader } from "react-spinners";
 import { motion } from "framer-motion";
 import Moment from "react-moment";
+import VideoJS from "../../Utility/VideoJS/VideoJS";
+import "video.js/dist/video-js.css";
+import "videojs-youtube";
+import videojs from "video.js";
+import DOMPurify from "dompurify";
 // import Moment from "moment";
 function Home() {
   const [open, setOpen] = React.useState(false);
+  const [Source, setSource] = useState(null);
 
   const handleClose = (event, reason) => {
     if (reason === "clickaway") {
@@ -115,6 +125,42 @@ function Home() {
     },
   };
 
+  //| VideoJs Configs
+
+  const playerRef = useRef(null);
+
+  // const videoJsOptions = {
+  //   techOrder: ["youtube"],
+  //   autoplay: false,
+  //   controls: true,
+  //   responsive: true,
+  //   fluid: true,
+  //   // poster: "/licensed-image.jpg",
+  //   sources: {
+  //     src: Source,
+  //     type: "video/youtube",
+  //   },
+  //   youtube: {
+  //     ytControls: 2,
+  //     ytQuality: "hd1080", // Set the desired quality option (e.g., 'default', 'small', 'medium', 'large', 'hd720', 'hd1080')
+  //   },
+  // };
+
+  // console.log(videoJsOptions.sources.src);
+
+  const handlePlayerReady = (player) => {
+    playerRef.current = player;
+
+    // You can handle player events here, for example:
+    player.on("waiting", () => {
+      videojs.log("player is waiting");
+    });
+
+    player.on("dispose", () => {
+      videojs.log("player will dispose");
+    });
+  };
+
   return (
     <>
       <Box
@@ -174,7 +220,18 @@ function Home() {
                   }}
                 >
                   <img
-                    src={post.user && post.user.profilePictureKey}
+                    src={
+                      post.user &&
+                      post.user.profilePictureKey.includes(
+                        "https://profile-assets.showwcase.com"
+                      )
+                        ? post.user.profilePictureKey
+                        : `https://profile-assets.showwcase.com/${post.user.profilePictureKey.replace(
+                            /"/g,
+                            ""
+                          )}`
+                    }
+                    // https://profile-assets.showwcase.com
                     alt="user image"
                     width="50"
                     height="50"
@@ -254,12 +311,90 @@ function Home() {
                         variant="h2"
                         color="#C2CBC2"
                         sx={{ fontSize: "1rem", wordWrap: "break-word" }}
+                        dangerouslySetInnerHTML={{
+                          __html: DOMPurify.sanitize(post.message),
+                        }}
                       >
                         {/* Hello Showwcase! Check out my Show on Why is it so hard to
                       create PWA with Next.js?. Follow me to get all my latest
                       content. */}
-                        {post.message && post.message}
+                        {/* {post.message && post.message} */}
                       </Typography>
+                      {post.message == "" && (
+                        <Card sx={{ overflow: "hidden" }}>
+                          {post.linkPreviewMeta.url.includes(
+                            "www.youtube.com"
+                          ) ? (
+                            // <iframe src="https://www.youtube.com/watch?v=tbqVqP5ilzQ" frameborder="0"></iframe>
+                            <VideoJS
+                              options={{
+                                techOrder: ["youtube"],
+                                autoplay: false,
+                                controls: true,
+                                responsive: true,
+                                fluid: true,
+                                // poster: "/licensed-image.jpg",
+                                sources: {
+                                  // src: "https://www.youtube.com/watch?v=ZE1do8UdHsI&ab_channel=HowToIn5Minutes",
+                                  src: `${post.linkPreviewMeta.url}`,
+                                  type: "video/youtube",
+                                },
+                              }}
+                              // sources={{
+                              //   src: "https://www.youtube.com/watch?v=ZE1do8UdHsI&ab_channel=HowToIn5Minutes",
+                              //   // src: `${post.linkPreviewMeta.url}`,
+                              //   type: "video/youtube",
+                              // }}
+                              // sources={{
+                              //   // src: `${post.linkPreviewMeta.url}`,
+                              //   src: "https://www.youtube.com/embed/tbqVqP5ilzQ",
+                              //   type: "video/youtube",
+                              // }}
+                              // data-setup={{
+                              //   poster: `${post.linkPreviewMeta.images[0]}`,
+                              // }}
+                              // data-setup='{ "techOrder": ["youtube"], "sources": [{ "type": "video/youtube", "src": "https://www.youtube.com/watch?v=iRusbYIyRNI"}] }'
+                              onReady={handlePlayerReady}
+                            />
+                          ) : (
+                            <CardMedia
+                              component="img"
+                              src={post.linkPreviewMeta.images[0]}
+                              alt="post image"
+                            />
+                          )}
+                          <CardContent
+                            sx={{
+                              bgcolor: "#202021",
+                              display: "flex",
+                              flexFlow: "column",
+                              gap: "1rem",
+                            }}
+                          >
+                            <Typography
+                              variant="h2"
+                              color="white"
+                              sx={{ fontSize: "1rem", fontWeight: "bold" }}
+                            >
+                              {post.linkPreviewMeta.title}
+                            </Typography>
+                            <Link
+                              href={post.linkPreviewMeta?.url}
+                              color="gray"
+                              underline="none"
+                            >
+                              {post.linkPreviewMeta?.url}
+                            </Link>
+                            <Typography
+                              variant="h2"
+                              color="#C2CBC2"
+                              sx={{ fontSize: "1rem" }}
+                            >
+                              {post.linkPreviewMeta?.description}
+                            </Typography>
+                          </CardContent>
+                        </Card>
+                      )}
                     </Box>
                     {/* bottom section of the post  */}
                     <Box>

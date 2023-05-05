@@ -161,6 +161,13 @@ function Home() {
     });
   };
 
+  // let test = '5';
+
+  // if (test !== null) {
+  //   console.log("not null");
+  // } else {
+  //   console.log("null");
+  // }
   return (
     <>
       <Box
@@ -239,8 +246,6 @@ function Home() {
                       aspectRatio: "1",
                       objectFit: "cover",
                       borderRadius: "100%",
-                      // minWidth:'2rem'
-                      // objectPosition:'top'
                     }}
                   />
                   <Box sx={{ flex: "1", width: "100%" }}>
@@ -310,6 +315,18 @@ function Home() {
                       <Typography
                         variant="h2"
                         color="#C2CBC2"
+                        sx={{
+                          fontSize: "1rem",
+                          fontWeight: "bold",
+                          wordWrap: "break-word",
+                          mb: ".8rem",
+                        }}
+                      >
+                        {post.title}
+                      </Typography>
+                      <Typography
+                        variant="h2"
+                        color="#C2CBC2"
                         sx={{ fontSize: "1rem", wordWrap: "break-word" }}
                         dangerouslySetInnerHTML={{
                           __html: DOMPurify.sanitize(post.message),
@@ -322,77 +339,90 @@ function Home() {
                       </Typography>
                       {post.message == "" && (
                         <Card sx={{ overflow: "hidden" }}>
-                          {post.linkPreviewMeta.url.includes(
+                          {post.linkPreviewMeta !== "null" &&
+                          post.linkPreviewMeta.url.includes(
                             "www.youtube.com"
                           ) ? (
-                            // <iframe src="https://www.youtube.com/watch?v=tbqVqP5ilzQ" frameborder="0"></iframe>
-                            <VideoJS
-                              options={{
-                                techOrder: ["youtube"],
-                                autoplay: false,
-                                controls: true,
-                                responsive: true,
-                                fluid: true,
-                                // poster: "/licensed-image.jpg",
-                                sources: {
-                                  // src: "https://www.youtube.com/watch?v=ZE1do8UdHsI&ab_channel=HowToIn5Minutes",
-                                  src: `${post.linkPreviewMeta.url}`,
-                                  type: "video/youtube",
-                                },
-                              }}
-                              // sources={{
-                              //   src: "https://www.youtube.com/watch?v=ZE1do8UdHsI&ab_channel=HowToIn5Minutes",
-                              //   // src: `${post.linkPreviewMeta.url}`,
-                              //   type: "video/youtube",
-                              // }}
-                              // sources={{
-                              //   // src: `${post.linkPreviewMeta.url}`,
-                              //   src: "https://www.youtube.com/embed/tbqVqP5ilzQ",
-                              //   type: "video/youtube",
-                              // }}
-                              // data-setup={{
-                              //   poster: `${post.linkPreviewMeta.images[0]}`,
-                              // }}
-                              // data-setup='{ "techOrder": ["youtube"], "sources": [{ "type": "video/youtube", "src": "https://www.youtube.com/watch?v=iRusbYIyRNI"}] }'
-                              onReady={handlePlayerReady}
-                            />
+                            <>
+                              {/* <iframe
+                                src="https://www.youtube.com/watch?v=tbqVqP5ilzQ"
+                                frameborder="0"
+                              ></iframe> */}
+                              <VideoJS
+                                options={{
+                                  techOrder: ["youtube"],
+                                  autoplay: false,
+                                  controls: true,
+                                  responsive: true,
+                                  fluid: true,
+                                  // poster: "/licensed-image.jpg",
+                                  sources: {
+                                    // src: "https://www.youtube.com/watch?v=ZE1do8UdHsI&ab_channel=HowToIn5Minutes",
+                                    src: `${post.linkPreviewMeta.url}`,
+                                    type: "video/youtube",
+                                  },
+                                }}
+                                // sources={{
+                                //   src: "https://www.youtube.com/watch?v=ZE1do8UdHsI&ab_channel=HowToIn5Minutes",
+                                //   // src: `${post.linkPreviewMeta.url}`,
+                                //   type: "video/youtube",
+                                // }}
+                                // sources={{
+                                //   // src: `${post.linkPreviewMeta.url}`,
+                                //   src: "https://www.youtube.com/embed/tbqVqP5ilzQ",
+                                //   type: "video/youtube",
+                                // }}
+                                // data-setup={{
+                                //   poster: `${post.linkPreviewMeta.images[0]}`,
+                                // }}
+                                // data-setup='{ "techOrder": ["youtube"], "sources": [{ "type": "video/youtube", "src": "https://www.youtube.com/watch?v=iRusbYIyRNI"}] }'
+                                onReady={handlePlayerReady}
+                              />
+                            </>
                           ) : (
                             <CardMedia
                               component="img"
-                              src={post.linkPreviewMeta.images[0]}
+                              src={
+                                post.linkPreviewMeta.images == null
+                                  ? post.images[0]
+                                  : post.linkPreviewMeta.images[0]
+                              }
                               alt="post image"
                             />
                           )}
-                          <CardContent
-                            sx={{
-                              bgcolor: "#202021",
-                              display: "flex",
-                              flexFlow: "column",
-                              gap: "1rem",
-                            }}
-                          >
-                            <Typography
-                              variant="h2"
-                              color="white"
-                              sx={{ fontSize: "1rem", fontWeight: "bold" }}
+                          {/* renders if the linkPreviewMeta is not null  */}
+                          {post.linkPreviewMeta !== "null" && (
+                            <CardContent
+                              sx={{
+                                bgcolor: "#202021",
+                                display: "flex",
+                                flexFlow: "column",
+                                gap: "1rem",
+                              }}
                             >
-                              {post.linkPreviewMeta.title}
-                            </Typography>
-                            <Link
-                              href={post.linkPreviewMeta?.url}
-                              color="gray"
-                              underline="none"
-                            >
-                              {post.linkPreviewMeta?.url}
-                            </Link>
-                            <Typography
-                              variant="h2"
-                              color="#C2CBC2"
-                              sx={{ fontSize: "1rem" }}
-                            >
-                              {post.linkPreviewMeta?.description}
-                            </Typography>
-                          </CardContent>
+                              <Typography
+                                variant="h2"
+                                color="white"
+                                sx={{ fontSize: "1rem", fontWeight: "bold" }}
+                              >
+                                {post.linkPreviewMeta.title}
+                              </Typography>
+                              <Link
+                                href={post.linkPreviewMeta?.url}
+                                color="gray"
+                                underline="none"
+                              >
+                                {post.linkPreviewMeta?.url}
+                              </Link>
+                              <Typography
+                                variant="h2"
+                                color="#C2CBC2"
+                                sx={{ fontSize: "1rem" }}
+                              >
+                                {post.linkPreviewMeta?.description}
+                              </Typography>
+                            </CardContent>
+                          )}
                         </Card>
                       )}
                     </Box>

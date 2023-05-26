@@ -9,6 +9,9 @@ import Bookmarks from "./Pages/Bookmarks/Bookmarks";
 import Communities from "./Pages/Communities/Communities";
 import Courses from "./Pages/Courses/Courses";
 import Podcasts from "./Pages/Podcasts/Podcasts";
+import SucessPayment from "./Components/Payment/SucessPayment";
+import Cancel from "./Components/Payment/Cancel";
+// import Login from "./Pages/Login/Login";
 
 function App() {
   return (
@@ -22,6 +25,12 @@ function App() {
         <Route path="/communities" element={<Communities />} />
         <Route path="/courses" element={<Courses />} />
         <Route path="/podcasts" element={<Podcasts />} />
+
+        {/* payments  */}
+        <Route path="payment/successful" element={<SucessPayment />} />
+        <Route path="payment/failed" element={<Cancel />} />
+        {/* <Route path="/signin" element={<Login />} /> */}
+        {/* <Route path="/podcasts" element={<Podcasts />} /> */}
       </Routes>
     </>
   );
